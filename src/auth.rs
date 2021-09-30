@@ -81,9 +81,13 @@ pub fn verify_jwt(token: &str, secret_key: &[u8]) -> Result<Claims, Error> {
     let split_token_vec = &split_token.collect::<Vec<&str>>();
 
     // TODO: Check if the token size is correct, should be 2
+    let mut current_index = 1;
+    if split_token_vec.len() == 1 {
+        current_index = 0;
+    }
 
     let token_message = decode::<Claims>(
-        &split_token_vec[1],
+        &split_token_vec[current_index],
         // TODO: Get secret from config and randomly generate it
         &DecodingKey::from_secret(secret_key),
         &Validation::new(Algorithm::HS256),
