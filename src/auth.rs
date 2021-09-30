@@ -45,7 +45,7 @@ pub struct User {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Claims {
+pub struct Claims {
     sub: String,
     exp: usize,
     iss: String,
@@ -59,7 +59,7 @@ impl FromRequest for User {
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         if let Some(token) = req.headers().get("Authorization") {
-            match verify_jwt(&token.to_str().unwrap()) {
+            match verify_jwt(&token.to_str().unwrap(), SECRET_KEY.as_bytes()) {
                 Ok(token_data) => {
                     let user = User {
                         username: token_data.sub,
@@ -76,7 +76,7 @@ impl FromRequest for User {
 }
 
 
-fn verify_jwt(token: &str) -> Result<Claims, Error> {
+pub fn verify_jwt(token: &str, secret_key: &[u8]) -> Result<Claims, Error> {
     let split_token = token.split_whitespace();
     let split_token_vec = &split_token.collect::<Vec<&str>>();
 
@@ -85,7 +85,7 @@ fn verify_jwt(token: &str) -> Result<Claims, Error> {
     let token_message = decode::<Claims>(
         &split_token_vec[1],
         // TODO: Get secret from config and randomly generate it
-        &DecodingKey::from_secret(SECRET_KEY.as_bytes()),
+        &DecodingKey::from_secret(secret_key),
         &Validation::new(Algorithm::HS256),
     );
     match token_message {
