@@ -27,9 +27,8 @@ pub enum AuthError {
 
 impl error::ResponseError for AuthError {
     fn error_response(&self) -> HttpResponse {
-        ResponseBuilder::new(self.status_code())
-            .set_header(header::CONTENT_TYPE, "text/html; charset=utf-8")
-            .body(self.to_string())
+        // TODO: Don't ignore body (self.to_string())
+        HttpResponse::new(self.status_code())
     }
 
     fn status_code(&self) -> StatusCode {
