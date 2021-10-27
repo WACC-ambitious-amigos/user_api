@@ -53,7 +53,6 @@ pub struct Claims {
 impl FromRequest for User {
     type Error = Error;
     type Future = future::Ready<Result<Self, Self::Error>>;
-    type Config = ();
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
         if let Some(token) = req.headers().get("Authorization") {
