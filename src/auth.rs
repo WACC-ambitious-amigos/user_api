@@ -1,4 +1,3 @@
-use actix_http::{http::header, ResponseBuilder};
 use actix_web::{
     dev::Payload, error, http::StatusCode, Error, FromRequest, HttpRequest, HttpResponse,
 };
